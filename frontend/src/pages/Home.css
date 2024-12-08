@@ -1,0 +1,36 @@
+.home-content {
+    display: flex;          
+    flex-direction: column; 
+    align-items: center;    
+    height: 100vh;          
+    text-align: center;     
+}
+
+.home-desc1 {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 42px;
+    margin-top: 50px;
+}
+
+.home-desc2 {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 36px;
+    margin-top: 50px;
+}
+
+.home-desc3 {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 36px;
+}
+
+.home-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: cadetblue; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }

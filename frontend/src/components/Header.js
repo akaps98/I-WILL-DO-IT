@@ -1,15 +1,17 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 
 const Header = () => {
     return (
       <header className="header">
-        <h1 className="logo"><a href="#home">I WILL DO IT</a></h1>
+        <FontAwesomeIcon icon={faBook} size="3x"/>
+        <h1 className="title"><a href="#home">I WILL DO IT</a></h1>
         <nav>
           <ul className="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#register">Register</a></li>
+            <li><a href="#login">Log In</a></li>
           </ul>
         </nav>
       </header>
