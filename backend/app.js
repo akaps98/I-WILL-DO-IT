@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');  // authRoutes 임포트
+const dbMiddleware = require('./config/dbMiddleware');  // dbMiddleware 임포트
 const { connectToDatabase, getDb } = require('./config/database');  // database.js에서 import
 
 dotenv.config();
@@ -9,6 +10,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());  // JSON 요청 바디 파싱
 app.use(cors());  // 모든 도메인에서의 요청을 허용
+
+app.use(dbMiddleware);
 
 // MongoDB 연결 설정
 connectToDatabase();

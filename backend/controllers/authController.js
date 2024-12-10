@@ -9,12 +9,14 @@ const login = async (req, res) => {
   try {
     // 이메일로 사용자 찾기
     const user = await UserModel.findByEmail(req.db, email);
+    console.log(user);
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
     // 비밀번호 확인
     const isMatch = await bcrypt.compare(password, user.password);
+    // console.log(isMatch);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
@@ -36,7 +38,7 @@ const login = async (req, res) => {
 
 // 회원가입 처리
 const register = async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, password } = req.body;  // confirmPassword는 클라이언트에서만 사용되고 서버로 전달되지 않음
 
   try {
     // 이메일 중복 확인
@@ -45,16 +47,11 @@ const register = async (req, res) => {
       return res.status(400).json({ message: 'Email is already registered' });
     }
 
-    // 비밀번호 일치 확인
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
     // 비밀번호 암호화
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 새 사용자 저장
-    const newUser = await UserModel.createUser(req.db, { email, password: hashedPassword });
+    const newUser = await UserModel.create(req.db, { email, password: hashedPassword });
 
     // JWT 토큰 생성
     const token = jwt.sign(
@@ -71,22 +68,29 @@ const register = async (req, res) => {
   }
 };
 
+
+// 이메일 중복 체크
 const checkEmail = async (req, res) => {
-    const { email } = req.body;
-  
-    try {
-      // 이메일로 사용자 찾기
-      const existingUser = await UserModel.findByEmail(req.db, email);
-  
-      if (existingUser) {
-        return res.status(400).json({ message: 'Email is already registered' });
-      } else {
-        return res.status(200).json({ message: 'Email is available' });
-      }
-    } catch (error) {
-      console.error("Check Email Error:", error);
-      return res.status(500).json({ message: 'Server error' });
+  const { email } = req.body;
+
+  // 이메일이 없는 경우, 400 에러 반환
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  try {
+    // 이메일로 사용자 찾기
+    const existingUser = await UserModel.findByEmail(req.db, email);
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email is already registered' });
+    } else {
+      return res.status(200).json({ message: 'Email is available' });
     }
-  };
+  } catch (error) {
+    console.error("Check Email Error:", error.message || error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
 
 module.exports = { login, register, checkEmail };
