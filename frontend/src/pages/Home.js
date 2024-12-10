@@ -9,7 +9,6 @@ function Home() {
 
   return (
     <div className="home-container">
-        <Header />
         <div className="home-content">
             <h1 className="home-desc1">SCHEDULING is essential!</h1>
             <h1 className="home-desc2">Don't forget your future plan :))</h1>

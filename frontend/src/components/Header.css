@@ -10,15 +10,14 @@
 .header .title {
     font-size: 30px;
     font-weight: bold;
-    /* margin-left: 120px; */
 }
 
-a {
+.header .title a {
     text-decoration: none;
-    color: inherit; 
+    color: inherit;
 }
 
-a:hover {
+.header .title a:hover {
     color: lightgray;
 }
 
@@ -33,13 +32,27 @@ a:hover {
     margin: 0 15px;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links Link {
     text-decoration: none;
     color: white;
     font-size: 20px;
     font-weight: bold;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links Link:hover {
+    color: #ddd;
+}
+
+.nav-links a:visited,
+.nav-links Link:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.nav-links a:active,
+.nav-links Link:active {
+    text-decoration: none;
     color: #ddd;
 }
