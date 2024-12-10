@@ -6,8 +6,8 @@ import './Header.css';
 const Header = () => {
     return (
       <header className="header">
-        <FontAwesomeIcon icon={faBook} size="3x"/>
         <h1 className="title"><a href="#home">I WILL DO IT</a></h1>
+        <FontAwesomeIcon icon={faBook} size="3x"/>
         <nav>
           <ul className="nav-links">
             <li><a href="#register">Register</a></li>
