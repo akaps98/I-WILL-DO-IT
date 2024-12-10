@@ -1,34 +1,92 @@
-const UserModel = require('../models/userModel');
-const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const UserModel = require('../models/userModel');  // UserModel 임포트
 
-const register = async (req, res) => {
+// 로그인 처리
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { name, email, password } = req.body;
+    // 이메일로 사용자 찾기
+    const user = await UserModel.findByEmail(req.db, email);
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // 비밀번호 확인
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // JWT 토큰 생성
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET, // .env 파일에 저장된 비밀 키 사용
+      { expiresIn: '1h' } // 토큰 만료 시간 설정 (예: 1시간)
+    );
+
+    // 토큰 반환
+    return res.json({ token });
+  } catch (error) {
+    console.error("Login Error:", error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// 회원가입 처리
+const register = async (req, res) => {
+  const { email, password, confirmPassword } = req.body;
+
+  try {
+    // 이메일 중복 확인
+    const existingUser = await UserModel.findByEmail(req.db, email);
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email is already registered' });
+    }
+
+    // 비밀번호 일치 확인
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    // 비밀번호 암호화
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = { name, email, password: hashedPassword };
-    const userId = await UserModel.create(req.db, user);
+    // 새 사용자 저장
+    const newUser = await UserModel.createUser(req.db, { email, password: hashedPassword });
 
-    res.status(201).json({ message: 'User registered successfully', userId });
+    // JWT 토큰 생성
+    const token = jwt.sign(
+      { userId: newUser._id, email: newUser.email },
+      process.env.JWT_SECRET, // .env 파일에 저장된 비밀 키 사용
+      { expiresIn: '1h' } // 토큰 만료 시간 설정
+    );
+
+    // 토큰 반환
+    return res.status(201).json({ token });
   } catch (error) {
-    res.status(500).json({ error: 'Error registering user' });
+    console.error("Register Error:", error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await UserModel.findByEmail(req.db, email);
+const checkEmail = async (req, res) => {
+    const { email } = req.body;
+  
+    try {
+      // 이메일로 사용자 찾기
+      const existingUser = await UserModel.findByEmail(req.db, email);
+  
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email is already registered' });
+      } else {
+        return res.status(200).json({ message: 'Email is available' });
+      }
+    } catch (error) {
+      console.error("Check Email Error:", error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  };
 
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ error: 'Invalid password' });
-
-    res.status(200).json({ message: 'Login successful', user });
-  } catch (error) {
-    res.status(500).json({ error: 'Error logging in' });
-  }
-};
-
-module.exports = { register, login };
+module.exports = { login, register, checkEmail };

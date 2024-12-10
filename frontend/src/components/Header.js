@@ -11,7 +11,7 @@ const Header = () => {
         <FontAwesomeIcon icon={faBook} size="3x"/>
         <nav>
           <ul className="nav-links">
-            <li><Link to='/'>Register</Link></li>
+            <li><Link to='/register'>Register</Link></li>
             <li><Link to='logIn'>Log In</Link></li>
           </ul>
         </nav>

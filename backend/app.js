@@ -1,17 +1,30 @@
-require('dotenv').config();
 const express = require('express');
-const connectToDatabase = require('./config/database');
-const authRoutes = require('./routes/authRoutes');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const authRoutes = require('./routes/authRoutes');  // authRoutes 임포트
+const { connectToDatabase, getDb } = require('./config/database');  // database.js에서 import
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+app.use(express.json());  // JSON 요청 바디 파싱
+app.use(cors());  // 모든 도메인에서의 요청을 허용
 
-app.use(express.json());
-
+// MongoDB 연결 설정
 connectToDatabase();
 
-app.use('/api/auth', authRoutes);
+// DB 객체를 모든 라우트에서 사용 가능하게 설정
+app.use((req, res, next) => {
+  req.db = getDb();  // db 객체를 req.db로 설정
+  next();
+});
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// 인증 라우트 설정
+app.use('/api/auth', authRoutes);  // authRoutes 연결
+
+const port = process.env.PORT || 5001;
+
+// 서버 시작
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
