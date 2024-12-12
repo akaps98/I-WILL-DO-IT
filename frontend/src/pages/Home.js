@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../components/Header";
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 function Home() {
@@ -13,9 +13,9 @@ function Home() {
             <h1 className="home-desc1">SCHEDULING is essential!</h1>
             <h1 className="home-desc2">Don't forget your future plan :))</h1>
             <h1 className="home-desc3">Shall we schedule?</h1>
-            <button className="home-button" onClick={handleClick}>
+            <Link to = ''><button className="home-button" onClick={handleClick}>
               Why not?
-            </button>
+            </button></Link>
         </div>
     </div>
   );

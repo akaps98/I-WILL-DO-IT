@@ -9,7 +9,6 @@ let db;
 const connectToDatabase = async () => {
   try {
     if (!client) {
-      // useNewUrlParser와 useUnifiedTopology 옵션을 제거
       client = new MongoClient(uri);
       await client.connect();
       db = client.db('iwilldoit_db');  // 데이터베이스 이름 설정
